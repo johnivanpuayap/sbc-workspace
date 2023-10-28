@@ -36,30 +36,27 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Web3 = require("@solana/web3.js");
+require("dotenv/config");
 var base58 = require("bs58");
+var Web3 = require("@solana/web3.js");
+var token = require("@solana/spl-token");
+var connection = new Web3.Connection(Web3.clusterApiUrl("devnet"));
+var publickey = new Web3.PublicKey("Agd2hRTJmoQkS4y6QXXfr9RV2nWrPWkKWJ2EJ83Zczej");
+var decoded = base58.decode("iohHY9MYDFcVereGpsvFDyu6ipt4gKDQzgHUPPFrxi87x8X8EkJKazjzPYtibYLogkhRqen1kNNJWJvQHx31zn7");
+var keyPair = Web3.Keypair.fromSecretKey(decoded);
+var tokenMint = "FZa3eF1v9Rd33AqHqPQG3oyUfuJN8GgakkYBLYzZoam3";
 function main() {
     return __awaiter(this, void 0, void 0, function () {
-        var decoded, keyPair, publicKeyFrom, publicKeyTo, instruction, transaction, connection, txSignature;
+        var tokenAccount;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    decoded = base58.decode('iohHY9MYDFcVereGpsvFDyu6ipt4gKDQzgHUPPFrxi87x8X8EkJKazjzPYtibYLogkhRqen1kNNJWJvQHx31zn7');
-                    keyPair = Web3.Keypair.fromSecretKey(decoded);
-                    publicKeyFrom = new Web3.PublicKey('DPTmfmFH6nnzsae5Ny964rNDAyTsTty4URKzFhJRnoWB');
-                    publicKeyTo = new Web3.PublicKey('Agd2hRTJmoQkS4y6QXXfr9RV2nWrPWkKWJ2EJ83Zczej');
-                    instruction = Web3.SystemProgram.transfer({
-                        fromPubkey: publicKeyFrom,
-                        toPubkey: publicKeyTo,
-                        lamports: 999999999,
-                    });
-                    transaction = new Web3.Transaction();
-                    transaction.add(instruction);
-                    connection = new Web3.Connection(Web3.clusterApiUrl('devnet'));
-                    return [4 /*yield*/, Web3.sendAndConfirmTransaction(connection, transaction, [keyPair])];
+                case 0: return [4 /*yield*/, token.createAccount(connection, // connection
+                    keyPair, // signer
+                    new Web3.PublicKey(tokenMint), // mint public key
+                    publickey)];
                 case 1:
-                    txSignature = _a.sent();
-                    console.log('txHash', txSignature);
+                    tokenAccount = _a.sent();
+                    console.log(tokenAccount.toBase58());
                     return [2 /*return*/];
             }
         });

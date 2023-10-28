@@ -8,10 +8,12 @@ async function main() {
     const publicKeyFrom = new Web3.PublicKey('DPTmfmFH6nnzsae5Ny964rNDAyTsTty4URKzFhJRnoWB');
     const publicKeyTo = new Web3.PublicKey('Agd2hRTJmoQkS4y6QXXfr9RV2nWrPWkKWJ2EJ83Zczej');
 
+
+    // send one instruction
     const instruction = Web3.SystemProgram.transfer({
         fromPubkey: publicKeyFrom,
         toPubkey: publicKeyTo,
-        lamports: 1,
+        lamports: 999999999,
     });
     const transaction = new Web3.Transaction();
     transaction.add(instruction);
@@ -19,7 +21,7 @@ async function main() {
     const connection = new Web3.Connection(Web3.clusterApiUrl('devnet'))
     const txSignature = await Web3.sendAndConfirmTransaction(connection, transaction, [keyPair]);
 
-    console.log('txHash', txSignature)
+    console.log('txtHash', txSignature);
 }
 
 main();

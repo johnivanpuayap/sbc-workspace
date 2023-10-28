@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -35,34 +34,38 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-var Web3 = require("@solana/web3.js");
+var _this = this;
+var _a = require('@solana/web3.js'), clusterApiUrl = _a.clusterApiUrl, Connection = _a.Connection, Keypair = _a.Keypair, LAMPORTS_PER_SOL = _a.LAMPORTS_PER_SOL, PublicKey = _a.PublicKey;
+var _b = require('@solana/spl-token'), createMint = _b.createMint, getOrCreateAssociatedTokenAccount = _b.getOrCreateAssociatedTokenAccount, mintTo = _b.mintTo, transfer = _b.transfer;
 var base58 = require("bs58");
-function main() {
-    return __awaiter(this, void 0, void 0, function () {
-        var decoded, keyPair, publicKeyFrom, publicKeyTo, instruction, transaction, connection, txSignature;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    decoded = base58.decode('iohHY9MYDFcVereGpsvFDyu6ipt4gKDQzgHUPPFrxi87x8X8EkJKazjzPYtibYLogkhRqen1kNNJWJvQHx31zn7');
-                    keyPair = Web3.Keypair.fromSecretKey(decoded);
-                    publicKeyFrom = new Web3.PublicKey('DPTmfmFH6nnzsae5Ny964rNDAyTsTty4URKzFhJRnoWB');
-                    publicKeyTo = new Web3.PublicKey('Agd2hRTJmoQkS4y6QXXfr9RV2nWrPWkKWJ2EJ83Zczej');
-                    instruction = Web3.SystemProgram.transfer({
-                        fromPubkey: publicKeyFrom,
-                        toPubkey: publicKeyTo,
-                        lamports: 999999999,
-                    });
-                    transaction = new Web3.Transaction();
-                    transaction.add(instruction);
-                    connection = new Web3.Connection(Web3.clusterApiUrl('devnet'));
-                    return [4 /*yield*/, Web3.sendAndConfirmTransaction(connection, transaction, [keyPair])];
-                case 1:
-                    txSignature = _a.sent();
-                    console.log('txHash', txSignature);
-                    return [2 /*return*/];
-            }
-        });
+(function () { return __awaiter(_this, void 0, void 0, function () {
+    var connection, publickey, decoded, fromWallet, toWallet, mint, fromTokenAccount, toTokenAccount, signature;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+                publickey = new PublicKey("DPTmfmFH6nnzsae5Ny964rNDAyTsTty4URKzFhJRnoWB");
+                decoded = base58.decode("iohHY9MYDFcVereGpsvFDyu6ipt4gKDQzgHUPPFrxi87x8X8EkJKazjzPYtibYLogkhRqen1kNNJWJvQHx31zn7");
+                fromWallet = Keypair.fromSecretKey(decoded);
+                toWallet = new PublicKey("Agd2hRTJmoQkS4y6QXXfr9RV2nWrPWkKWJ2EJ83Zczej");
+                return [4 /*yield*/, createMint(connection, fromWallet, fromWallet.publicKey, null, 9)];
+            case 1:
+                mint = _a.sent();
+                return [4 /*yield*/, getOrCreateAssociatedTokenAccount(connection, fromWallet, mint, fromWallet.publicKey)];
+            case 2:
+                fromTokenAccount = _a.sent();
+                return [4 /*yield*/, getOrCreateAssociatedTokenAccount(connection, fromWallet, mint, toWallet)];
+            case 3:
+                toTokenAccount = _a.sent();
+                return [4 /*yield*/, mintTo(connection, fromWallet, mint, fromTokenAccount.address, fromWallet.publicKey, 100000000000)];
+            case 4:
+                signature = _a.sent();
+                console.log('mint tx:', signature);
+                return [4 /*yield*/, transfer(connection, fromWallet, fromTokenAccount.address, toTokenAccount.address, fromWallet.publicKey, 100)];
+            case 5:
+                // Transfer the new token to the "toTokenAccount" we just created
+                signature = _a.sent();
+                return [2 /*return*/];
+        }
     });
-}
-main();
+}); })();
