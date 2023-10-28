@@ -13,7 +13,7 @@ async function main(){
         connection,
         keyPair,
         publickey, // mint auth
-        publickey, // freeze atuh
+        publickey, // freeze auth
         9 //decimals
     )
     console.log(tokenMint.toBase58());

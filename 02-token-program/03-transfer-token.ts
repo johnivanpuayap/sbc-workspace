@@ -51,11 +51,11 @@ const base58 = require("bs58");
 
     // Transfer the new token to the "toTokenAccount" we just created
     signature = await transfer(
-        connection,
-        fromWallet,
-        fromTokenAccount.address,
-        toTokenAccount.address,
-        fromWallet.publicKey,
-        100
+        connection,                 
+        fromWallet,                 // Sender's wallet (with private key)
+        fromTokenAccount.address,   // Source token account's public key
+        toTokenAccount.address,     // Destination token account's public key
+        fromWallet.publicKey,       // Signer's public key (typically the sender)
+        100                         // Number of tokens to transfer
     );
 })();
