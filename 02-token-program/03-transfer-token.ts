@@ -25,14 +25,20 @@ const base58 = require("bs58");
     const toWallet = new PublicKey("Agd2hRTJmoQkS4y6QXXfr9RV2nWrPWkKWJ2EJ83Zczej")
 
     // Create new token mint
-    const mint = await createMint(connection, fromWallet, fromWallet.publicKey, null, 9);
+    const mint = await createMint(
+        connection,
+        fromWallet, //keyPair
+        fromWallet.publicKey, //mint Auth
+        null, //freeze Auth
+        9
+    );
 
     // Get the token account of the fromWallet address, and if it does not exist, create it
     const fromTokenAccount = await getOrCreateAssociatedTokenAccount(
         connection,
-        fromWallet,
-        mint,
-        fromWallet.publicKey
+        fromWallet,             // signer
+        mint,                   //mint public key
+        fromWallet.publicKey    //owner of the token account
     );
 
     // Get the token account of the toWallet address, and if it does not exist, create it
@@ -41,11 +47,11 @@ const base58 = require("bs58");
     // Mint 100 new token to the "fromTokenAccount" account we just created
     let signature = await mintTo(
         connection,
-        fromWallet,
-        mint,
-        fromTokenAccount.address,
-        fromWallet.publicKey,
-        100000000000
+        fromWallet,                 // Sender's wallet
+        mint,                       // Token Mint
+        fromTokenAccount.address,   // Source token account's public key
+        fromWallet.publicKey,       // Signer's public key
+        100000000000                // number of tokens to mint and transfer
     );
     console.log('mint tx:', signature);
 
